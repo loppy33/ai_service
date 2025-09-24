@@ -1,0 +1,9 @@
+templates:
+  none: |
+    %Query%
+  geo_only: |
+    %Query%. Answer as if I am in %GEO%, but don't add this info to answer
+  lang_only: |
+    %Query%. Answer as if my language is %Lang%, but don't add this info to answer
+  geo_and_lang: |
+    %Query%. Answer as if I am in %GEO% and my language is %Lang%, but don't add this info to answer

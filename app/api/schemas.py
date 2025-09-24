@@ -1,0 +1,70 @@
+from typing import Optional, List, Dict
+from pydantic import BaseModel, HttpUrl, Field, model_validator
+
+class Geo(BaseModel):
+    country: str
+    language: str
+    location: Optional[str] = None
+
+class Target(BaseModel):
+    url: Optional[HttpUrl] = None
+    domain: Optional[str] = None
+    brand: Optional[str] = None
+
+    @model_validator(mode="after")
+    def at_least_one(self):
+        if not (self.url or self.domain or self.brand):
+            raise ValueError("target: укажи хотя бы одно из полей: url, domain или brand")
+        return self
+
+class Options(BaseModel):
+    timeout_ms: Optional[int] = 8000
+    cache_ttl_sec: Optional[int] = 120
+    model: Optional[str] = None
+    temperature: Optional[float] = None
+    api_key: Optional[str] = None
+    user_login_pass: Optional[str] = None
+    proxy_list: Optional[List[str]] = None
+    antikapcha_key: Optional[str] = None
+
+class QueryRequest(BaseModel):
+    query: str
+    geo: Optional[Geo] = None
+    target: Target
+    source: str = Field(..., pattern="^(google_ai|gpt_api|gpt_chat_parse)$")
+    options: Optional[Options] = None
+
+class Citation(BaseModel):
+    url: str
+    title: Optional[str] = None
+
+class Render(BaseModel):
+    screenshot_url: Optional[str] = None
+    raw_payload: Dict
+
+class QueryResponse(BaseModel):
+    position: Optional[int] = None
+    answer: str
+    citations: List[Citation]
+    render: Render
+    timings_ms: Optional[Dict[str, int]] = None
+
+class ErrorResponse(BaseModel):
+    error: Dict[str, str]
+
+class BatchQueryRequest(BaseModel):
+    queries: List[str]
+    geo: Optional[Geo] = None
+    target: Target
+    source: str = Field(..., pattern="^(google_ai|gpt_api|gpt_chat_parse)$")
+    options: Optional[Options] = None
+    concurrency: Optional[int] = 5  # ограничение одновременных запросов
+
+class ItemResult(BaseModel):
+    query: str
+    response: Optional["QueryResponse"] = None
+    error: Optional[str] = None
+
+class BatchQueryResponse(BaseModel):
+    results: List[ItemResult]
+    timings_ms: Optional[Dict[str, int]] = None
