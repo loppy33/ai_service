@@ -1,0 +1,72 @@
+﻿Комагда для запуска софта рега сессий: python login_chatgpt.py 
+Команда для запуска сервера: python -m uvicorn app.main:app
+
+
+Самый медленный режим gpt_chat_parse
+
+{
+  "queries": [
+    "купить кроссовки",
+    "кроссовки скидка",
+    "лучшие кроссовки 2025"
+  ],
+  "geo": { "country": "ru", "language": "ru" },
+  "target": {
+    "url": "https://www.example.com/",
+    "domain": "example.com",
+    "brand": "Example"
+  },
+  "source": "gpt_chat_parse",
+  "options": {
+    "timeout_ms": 20000,
+    "proxy_list": [
+          "142.111.123.177:5553:agbtejaq:7ylsxjehc520",
+          "104.253.75.209:7631:agbtejaq:7ylsxjehc520",
+          "154.21.38.119:5701:agbtejaq:7ylsxjehc520"
+    ]
+  },
+  "concurrency": 3
+}
+
+Режим google_ai
+{
+"queries": ["buy btc", "buy xrp", "buy dogy"],
+   "geo": {
+    "country": "us",
+   "language": "en",
+  "location": "New York,New York,United States"
+  },
+ "target": {
+     "url": "https://www.binance.com",
+     "domain": "binance.com",
+     "brand": "Binance"
+  },
+  "source": "google_ai",
+  "options": {
+    "timeout_ms": 8000,
+    "cache_ttl_sec": 120,
+    "model": "string",
+    "temperature": 0,
+    "api_key": "b91c72c714babb1726e0edce04db9550c69a001a6e6ca87d1d51b958cd2bd75a"
+
+  }
+}
+
+Режим gpt_api
+
+{
+  "queries": ["buy btc", "buy xrp", "buy dogy"],
+  "geo": { "country": "ru", "language": "ru" },
+  "target": {
+    "domain": "example.com",
+    "url": "https://www.example.com/",
+    "brand": "Example"
+  },
+  "source": "gpt_api",
+  "options": {
+    "api_key": "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",
+    "model": "gpt-4.1-mini",
+    "timeout_ms": 10000
+  },
+  "concurrency": 5
+}
