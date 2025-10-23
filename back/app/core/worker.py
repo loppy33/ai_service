@@ -58,8 +58,10 @@ async def worker_loop():
                     continue
 
                 subj, html = render_email(job.template, user, job.payload or {})
+                print(f"[EmailQueue] tpl={job.template} subj={subj!r} html_len={len(html)}")
                 try:
                     send_email(user.email, subj, html)
+
                     job.sent = True
                     s.commit()
                 except Exception as e:

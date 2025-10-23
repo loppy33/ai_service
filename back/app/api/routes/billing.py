@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
 import os, stripe
-
+from dotenv import load_dotenv
+load_dotenv()
 router = APIRouter(prefix="/billing", tags=["Billing"])
 
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")  # из кабинета Stripe
