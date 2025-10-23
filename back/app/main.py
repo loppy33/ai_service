@@ -1,5 +1,10 @@
 from fastapi import FastAPI, HTTPException
+
 from app.api.schemas import QueryRequest, QueryResponse, ErrorResponse, BatchQueryRequest, BatchQueryResponse
+from app.core.db import Base, engine
+# 👇 Обязательно импортируем модели, чтобы они зарегистрировались в Base.metadata
+from app.models import user as _user      # noqa: F401
+from app.models import email_queue as _q  # noqa: F401
 from app.core.resolver import resolve_query
 from pathlib import Path
 from fastapi.staticfiles import StaticFiles
@@ -8,8 +13,30 @@ from app.api.routes import analyze   # NEW
 from app.api.routes import leads     # NEW
 from app.api.routes import billing   # NEW
 from fastapi.middleware.cors import CORSMiddleware
+import asyncio
+from app.core.worker import worker_loop
+from contextlib import asynccontextmanager
 
-app = FastAPI(title="LLM SERP Parser API")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # 1) Сначала создаём таблицы
+    Base.metadata.create_all(bind=engine)
+
+    # 2) Потом запускаем воркер
+    # Запуск фонового воркера при старте приложения
+    worker_task = asyncio.create_task(worker_loop())
+    print("🚀 Worker started")
+
+    yield  # <-- пока приложение работает
+
+    # Завершение при остановке FastAPI
+    worker_task.cancel()
+    try:
+        await worker_task
+    except asyncio.CancelledError:
+        print("🛑 Worker stopped")
+
+app = FastAPI(title="LLM SERP Parser API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -40,3 +67,4 @@ async def check_query(req: BatchQueryRequest):
 @app.get("/health")
 def health():
     return {"status": "ok"}
+

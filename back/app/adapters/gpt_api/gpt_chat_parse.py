@@ -10,8 +10,8 @@ from playwright.async_api import async_playwright, TimeoutError as PlaywrightTim
 from app.api.schemas import BatchQueryRequest, BatchQueryResponse, ItemResult, QueryRequest, QueryResponse
 
 from app.core.position import match_position
-from app.modes.utiles import *
-from app.modes.utiles import _compute_flags_and_position
+from app.core.utiles import *
+from app.core.utiles import _compute_flags_and_position
 
 # === Константы ===
 TARGET_URL = "https://chat.openai.com/"

@@ -16,7 +16,7 @@ from app.api.schemas import (
 )
 
 # Используем те же утилиты, что и gpt_chat_parse.py
-from app.modes.utiles import (
+from app.core.utiles import (
     build_prompt,
     extract_urls,
     extract_urls_from_html,
