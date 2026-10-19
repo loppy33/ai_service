@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 620" width="1280" height="620" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6ef"/><stop offset="0.55" stop-color="#fdeef6"/><stop offset="1" stop-color="#eef2ff"/></linearGradient><linearGradient id="hl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff9a52"/><stop offset="0.5" stop-color="#c061f0"/><stop offset="1" stop-color="#f7a8e6"/></linearGradient><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#6b5a64"/></marker><filter id="sh" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#5a2a4a" flood-opacity="0.12"/></filter></defs>
+<rect width="1280" height="620" rx="22" fill="url(#bg)"/>
+<rect x="40" y="34" width="46" height="6" rx="3" fill="url(#hl)"/>
+<text x="40" y="76" font-size="26" font-weight="700" fill="#2a1620" text-anchor="start">User journey</text>
+<text x="40" y="102" font-size="15" font-weight="400" fill="#6b5a64" text-anchor="start">From the first sign-up to a payment, every step is a screen of the app.</text>
+<rect x="40" y="150" width="220" height="104" rx="14" fill="#ffffff" stroke="#ff9a52" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="40" y="150" width="7" height="104" rx="3" fill="#ff9a52"/>
+<text x="60" y="176" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">1  Sign up</text>
+<text x="60" y="196" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">email · password · project</text>
+<rect x="285" y="150" width="220" height="104" rx="14" fill="#ffffff" stroke="#ff9a52" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="285" y="150" width="7" height="104" rx="3" fill="#ff9a52"/>
+<text x="305" y="176" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">2  Brand</text>
+<text x="305" y="196" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">website · name · market</text>
+<rect x="530" y="150" width="220" height="104" rx="14" fill="#ffffff" stroke="#f08cc4" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="530" y="150" width="7" height="104" rx="3" fill="#f08cc4"/>
+<text x="550" y="176" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">3  AI summary</text>
+<text x="550" y="196" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">does the AI know you?</text>
+<rect x="775" y="150" width="220" height="104" rx="14" fill="#ffffff" stroke="#f08cc4" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="775" y="150" width="7" height="104" rx="3" fill="#f08cc4"/>
+<text x="795" y="176" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">4  Phrases</text>
+<text x="795" y="196" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">pick up to 10, add own</text>
+<rect x="1020" y="150" width="220" height="104" rx="14" fill="#ffffff" stroke="#b18cf0" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="1020" y="150" width="7" height="104" rx="3" fill="#b18cf0"/>
+<text x="1040" y="176" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">5  Queries</text>
+<text x="1040" y="196" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">relevance %, up to 5 extra</text>
+<path d="M260 202 L285 202" fill="none" stroke="#6b5a64" stroke-width="1.8" marker-end="url(#arr)"/>
+<path d="M505 202 L530 202" fill="none" stroke="#6b5a64" stroke-width="1.8" marker-end="url(#arr)"/>
+<path d="M750 202 L775 202" fill="none" stroke="#6b5a64" stroke-width="1.8" marker-end="url(#arr)"/>
+<path d="M995 202 L1020 202" fill="none" stroke="#6b5a64" stroke-width="1.8" marker-end="url(#arr)"/>
+<path d="M1130 254 V300 H150 V350" fill="none" stroke="#6b5a64" stroke-width="1.8" marker-end="url(#arr)"/>
+<text x="640" y="292" font-size="12" font-weight="600" fill="#6b5a64" text-anchor="middle">the queries are sent to the model</text>
+<rect x="40" y="350" width="220" height="104" rx="14" fill="#ffffff" stroke="#6cc58a" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="40" y="350" width="7" height="104" rx="3" fill="#6cc58a"/>
+<text x="60" y="376" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">6  Overview</text>
+<text x="60" y="396" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">visibility · position · sources</text>
+<rect x="285" y="350" width="220" height="104" rx="14" fill="#ffffff" stroke="#6cc58a" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="285" y="350" width="7" height="104" rx="3" fill="#6cc58a"/>
+<text x="305" y="376" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">Update report</text>
+<text x="305" y="396" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">re-runs the queries</text>
+<text x="305" y="414" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">saves a point for today</text>
+<rect x="530" y="350" width="220" height="104" rx="14" fill="#ffffff" stroke="#78a8f0" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="530" y="350" width="7" height="104" rx="3" fill="#78a8f0"/>
+<text x="550" y="376" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">Email report</text>
+<text x="550" y="396" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">modal → lead</text>
+<text x="550" y="414" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">+ confirmation email</text>
+<rect x="775" y="350" width="220" height="104" rx="14" fill="#ffffff" stroke="#f08cc4" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="775" y="350" width="7" height="104" rx="3" fill="#f08cc4"/>
+<text x="795" y="376" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">7  Plans</text>
+<text x="795" y="396" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">Basic · Pro · Custom</text>
+<rect x="1020" y="350" width="220" height="104" rx="14" fill="#ffffff" stroke="#f08cc4" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="1020" y="350" width="7" height="104" rx="3" fill="#f08cc4"/>
+<text x="1040" y="376" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">8  Payment</text>
+<text x="1040" y="396" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">Stripe Checkout</text>
+<text x="1040" y="414" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">then the success page</text>
+<path d="M150 454 V486 H885" fill="none" stroke="#6b5a64" stroke-width="1.8"/>
+<path d="M395 486 V454" fill="none" stroke="#6b5a64" stroke-width="1.8" marker-end="url(#arr)"/>
+<path d="M640 486 V454" fill="none" stroke="#6b5a64" stroke-width="1.8" marker-end="url(#arr)"/>
+<path d="M885 486 V454" fill="none" stroke="#6b5a64" stroke-width="1.8" marker-end="url(#arr)"/>
+<path d="M995 402 L1020 402" fill="none" stroke="#6b5a64" stroke-width="1.8" marker-end="url(#arr)"/>
+<rect x="40" y="540" width="381.2" height="26" rx="13" fill="#f4f1f3" stroke="#c2b6bd"/>
+<text x="230.6" y="557.5" font-size="12.5" font-weight="600" fill="#2a1620" text-anchor="middle">Wrong summary? Describe the company in one sentence</text>
+<rect x="450" y="540" width="273.2" height="26" rx="13" fill="#f4f1f3" stroke="#c2b6bd"/>
+<text x="586.6" y="557.5" font-size="12.5" font-weight="600" fill="#2a1620" text-anchor="middle">Every call after sign-up needs a JWT</text>
+<rect x="760" y="540" width="402.8" height="26" rx="13" fill="#f4f1f3" stroke="#c2b6bd"/>
+<text x="961.4" y="557.5" font-size="12.5" font-weight="600" fill="#2a1620" text-anchor="middle">Custom plan → contact form → saved + email to the team</text>
+</svg>

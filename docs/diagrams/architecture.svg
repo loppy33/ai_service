@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 780" width="1280" height="780" font-family="'Segoe UI', Inter, 'Helvetica Neue', Arial, sans-serif">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6ef"/><stop offset="0.55" stop-color="#fdeef6"/><stop offset="1" stop-color="#eef2ff"/></linearGradient><linearGradient id="hl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff9a52"/><stop offset="0.5" stop-color="#c061f0"/><stop offset="1" stop-color="#f7a8e6"/></linearGradient><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#6b5a64"/></marker><filter id="sh" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#5a2a4a" flood-opacity="0.12"/></filter></defs>
+<rect width="1280" height="780" rx="22" fill="url(#bg)"/>
+<rect x="40" y="34" width="46" height="6" rx="3" fill="url(#hl)"/>
+<text x="40" y="76" font-size="26" font-weight="700" fill="#2a1620" text-anchor="start">System architecture</text>
+<text x="40" y="102" font-size="15" font-weight="400" fill="#6b5a64" text-anchor="start">A React SPA talks to a FastAPI backend that queries AI sources, stores results in PostgreSQL and sends emails.</text>
+<rect x="40" y="130" width="270" height="440" rx="18" fill="#fff1e6" fill-opacity="0.55" stroke="#ff9a52" stroke-width="1.5" stroke-dasharray="6 6"/>
+<text x="58" y="158" font-size="12" font-weight="700" fill="#6b5a64" text-anchor="start">BROWSER</text>
+<text x="58" y="180" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">React 19 + Vite + TypeScript</text>
+<rect x="58" y="200" width="234" height="70" rx="14" fill="#ffffff" stroke="#ff9a52" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="58" y="200" width="7" height="70" rx="3" fill="#ff9a52"/>
+<text x="78" y="226" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">Sign up / Log in</text>
+<text x="78" y="246" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">JWT kept in localStorage</text>
+<rect x="58" y="288" width="234" height="70" rx="14" fill="#ffffff" stroke="#ff9a52" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="58" y="288" width="7" height="70" rx="3" fill="#ff9a52"/>
+<text x="78" y="314" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">Onboarding chat</text>
+<text x="78" y="334" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">brand, phrases, queries</text>
+<rect x="58" y="376" width="234" height="70" rx="14" fill="#ffffff" stroke="#ff9a52" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="58" y="376" width="7" height="70" rx="3" fill="#ff9a52"/>
+<text x="78" y="402" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">Overview</text>
+<text x="78" y="422" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">KPIs, charts, citations</text>
+<rect x="58" y="464" width="234" height="70" rx="14" fill="#ffffff" stroke="#ff9a52" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="58" y="464" width="7" height="70" rx="3" fill="#ff9a52"/>
+<text x="78" y="490" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">Plans</text>
+<text x="78" y="510" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">Stripe checkout, contact</text>
+<rect x="400" y="130" width="420" height="440" rx="18" fill="#f1eaff" fill-opacity="0.55" stroke="#b18cf0" stroke-width="1.5" stroke-dasharray="6 6"/>
+<text x="418" y="158" font-size="12" font-weight="700" fill="#6b5a64" text-anchor="start">FASTAPI BACKEND</text>
+<rect x="418" y="176" width="180" height="72" rx="14" fill="#ffffff" stroke="#b18cf0" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="418" y="176" width="7" height="72" rx="3" fill="#b18cf0"/>
+<text x="438" y="202" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">/auth</text>
+<text x="438" y="222" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">register · login · me</text>
+<rect x="610" y="176" width="180" height="72" rx="14" fill="#ffffff" stroke="#b18cf0" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="610" y="176" width="7" height="72" rx="3" fill="#b18cf0"/>
+<text x="630" y="202" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">/analyze</text>
+<text x="630" y="222" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">insight · phrases · overview</text>
+<rect x="418" y="258" width="180" height="72" rx="14" fill="#ffffff" stroke="#b18cf0" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="418" y="258" width="7" height="72" rx="3" fill="#b18cf0"/>
+<text x="438" y="284" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">/leads</text>
+<text x="438" y="304" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">report + contact requests</text>
+<rect x="610" y="258" width="180" height="72" rx="14" fill="#ffffff" stroke="#b18cf0" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="610" y="258" width="7" height="72" rx="3" fill="#b18cf0"/>
+<text x="630" y="284" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">/billing</text>
+<text x="630" y="304" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">checkout + webhook</text>
+<rect x="418" y="340" width="372" height="56" rx="14" fill="#ffffff" stroke="#b18cf0" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="418" y="340" width="7" height="56" rx="3" fill="#b18cf0"/>
+<text x="438" y="366" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">Resolver</text>
+<text x="438" y="386" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">routes a batch to gpt_api · google_ai · gpt_chat_parse</text>
+<rect x="418" y="408" width="180" height="70" rx="14" fill="#ffffff" stroke="#b18cf0" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="418" y="408" width="7" height="70" rx="3" fill="#b18cf0"/>
+<text x="438" y="434" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">Position matcher</text>
+<text x="438" y="454" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">URL · prefix · domain · brand</text>
+<rect x="610" y="408" width="180" height="70" rx="14" fill="#ffffff" stroke="#b18cf0" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="610" y="408" width="7" height="70" rx="3" fill="#b18cf0"/>
+<text x="630" y="434" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">Auth + JWT</text>
+<text x="630" y="454" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">every route needs a token</text>
+<rect x="418" y="490" width="372" height="64" rx="14" fill="#ffffff" stroke="#b18cf0" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="418" y="490" width="7" height="64" rx="3" fill="#b18cf0"/>
+<text x="438" y="516" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">Prompt templates</text>
+<text x="438" y="536" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">geo / language wrappers from YAML</text>
+<rect x="900" y="130" width="340" height="270" rx="18" fill="#e8f1ff" fill-opacity="0.55" stroke="#78a8f0" stroke-width="1.5" stroke-dasharray="6 6"/>
+<text x="918" y="158" font-size="12" font-weight="700" fill="#6b5a64" text-anchor="start">AI SOURCES</text>
+<rect x="918" y="172" width="304" height="62" rx="14" fill="#ffffff" stroke="#78a8f0" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="918" y="172" width="7" height="62" rx="3" fill="#78a8f0"/>
+<text x="938" y="198" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">OpenAI API</text>
+<text x="938" y="218" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">gpt_api · chat completions</text>
+<rect x="918" y="244" width="304" height="62" rx="14" fill="#ffffff" stroke="#78a8f0" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="918" y="244" width="7" height="62" rx="3" fill="#78a8f0"/>
+<text x="938" y="270" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">Google AI Overview</text>
+<text x="938" y="290" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">google_ai · via SerpAPI</text>
+<rect x="918" y="316" width="304" height="70" rx="14" fill="#ffffff" stroke="#78a8f0" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="918" y="316" width="7" height="70" rx="3" fill="#78a8f0"/>
+<text x="938" y="342" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">ChatGPT in a browser</text>
+<text x="938" y="362" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">gpt_chat_parse · Playwright + saved sessions</text>
+<rect x="900" y="430" width="340" height="140" rx="18" fill="#ffeaf4" fill-opacity="0.55" stroke="#f08cc4" stroke-width="1.5" stroke-dasharray="6 6"/>
+<text x="918" y="458" font-size="12" font-weight="700" fill="#6b5a64" text-anchor="start">EXTERNAL SERVICES</text>
+<rect x="918" y="470" width="140" height="88" rx="14" fill="#ffffff" stroke="#f08cc4" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="918" y="470" width="7" height="88" rx="3" fill="#f08cc4"/>
+<text x="938" y="496" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">Stripe</text>
+<text x="938" y="516" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">checkout · webhook</text>
+<rect x="1070" y="470" width="152" height="88" rx="14" fill="#ffffff" stroke="#f08cc4" stroke-width="1.6" filter="url(#sh)"/>
+<rect x="1070" y="470" width="7" height="88" rx="3" fill="#f08cc4"/>
+<text x="1090" y="496" font-size="15" font-weight="700" fill="#2a1620" text-anchor="start">SendPulse</text>
+<text x="1090" y="516" font-size="12.5" font-weight="400" fill="#6b5a64" text-anchor="start">transactional email</text>
+<rect x="400" y="620" width="420" height="130" rx="18" fill="#e8f8ee" fill-opacity="0.55" stroke="#6cc58a" stroke-width="1.5" stroke-dasharray="6 6"/>
+<text x="418" y="648" font-size="12" font-weight="700" fill="#6b5a64" text-anchor="start">POSTGRESQL</text>
+<text x="418" y="668" font-size="13" font-weight="400" fill="#2a1620" text-anchor="start">users · email_queue · leads · contact_requests</text>
+<text x="418" y="690" font-size="13" font-weight="400" fill="#2a1620" text-anchor="start">visibility_snapshots (one row per project per day)</text>
+<text x="418" y="722" font-size="12" font-weight="400" fill="#6b5a64" text-anchor="start">Tables are created automatically on start.</text>
+<rect x="900" y="620" width="340" height="130" rx="18" fill="#f4f1f3" fill-opacity="0.55" stroke="#c2b6bd" stroke-width="1.5" stroke-dasharray="6 6"/>
+<text x="918" y="648" font-size="12" font-weight="700" fill="#6b5a64" text-anchor="start">BACKGROUND WORKER</text>
+<text x="918" y="668" font-size="13" font-weight="400" fill="#2a1620" text-anchor="start">Wakes up every 60 s, sends due emails</text>
+<text x="918" y="690" font-size="13" font-weight="400" fill="#2a1620" text-anchor="start">from email_queue, retries up to 5 times.</text>
+<text x="918" y="722" font-size="12" font-weight="400" fill="#6b5a64" text-anchor="start">Pauses on provider 401 / 403 / 429.</text>
+<path d="M310 330 L400 330" fill="none" stroke="#6b5a64" stroke-width="1.8" marker-end="url(#arr)" marker-start="url(#arr)"/>
+<text x="355.0" y="318" font-size="12" font-weight="600" fill="#6b5a64" text-anchor="middle">REST + JWT</text>
+<path d="M820 265 L900 265" fill="none" stroke="#6b5a64" stroke-width="1.8" marker-end="url(#arr)" marker-start="url(#arr)"/>
+<text x="860.0" y="250" font-size="12" font-weight="600" fill="#6b5a64" text-anchor="middle">prompt → answer</text>
+<path d="M820 500 L900 500" fill="none" stroke="#6b5a64" stroke-width="1.8" marker-end="url(#arr)" marker-start="url(#arr)"/>
+<text x="860.0" y="486" font-size="12" font-weight="600" fill="#6b5a64" text-anchor="middle">checkout · emails</text>
+<path d="M610 570 L610 620" fill="none" stroke="#6b5a64" stroke-width="1.8" marker-end="url(#arr)" marker-start="url(#arr)"/>
+<text x="650" y="600" font-size="12" font-weight="600" fill="#6b5a64" text-anchor="start">SQLAlchemy</text>
+<path d="M820 685 L900 685" fill="none" stroke="#6b5a64" stroke-width="1.8" marker-end="url(#arr)"/>
+<text x="860.0" y="672" font-size="12" font-weight="600" fill="#6b5a64" text-anchor="middle">polls queue</text>
+<path d="M1146 620 L1146 558" fill="none" stroke="#6b5a64" stroke-width="1.8" marker-end="url(#arr)"/>
+<text x="1160" y="594" font-size="12" font-weight="600" fill="#6b5a64" text-anchor="start">sends</text>
+</svg>

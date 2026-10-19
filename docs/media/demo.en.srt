@@ -1,0 +1,159 @@
+1
+00:00:00,334 --> 00:00:00,567
+Hi!
+
+2
+00:00:00,567 --> 00:00:03,204
+This is a walkthrough of SeeUinAI.
+
+3
+00:00:03,204 --> 00:00:06,695
+It shows how often AI assistants like ChatGPT
+
+4
+00:00:06,695 --> 00:00:09,487
+mention your brand in their answers.
+
+5
+00:00:10,190 --> 00:00:12,335
+We start on the home page.
+
+6
+00:00:12,335 --> 00:00:15,058
+Click Login to create an account.
+
+7
+00:00:15,764 --> 00:00:18,692
+Sign-up takes half a minute: an email,
+
+8
+00:00:18,692 --> 00:00:21,774
+a password of at least eight characters,
+
+9
+00:00:21,774 --> 00:00:23,237
+and a project name.
+
+10
+00:00:23,237 --> 00:00:25,317
+The newsletter is optional.
+
+11
+00:00:26,012 --> 00:00:28,406
+Next, we introduce the brand.
+
+12
+00:00:28,406 --> 00:00:31,789
+Enter the website, the brand name and the
+
+13
+00:00:31,789 --> 00:00:34,595
+target market, then press Analyze.
+
+14
+00:00:35,310 --> 00:00:38,190
+The AI already knows something about the
+
+15
+00:00:38,190 --> 00:00:41,071
+company and retells it in its own words.
+
+16
+00:00:41,071 --> 00:00:43,088
+If that's right, we confirm.
+
+17
+00:00:43,794 --> 00:00:47,396
+The service suggests commercial search phrases.
+
+18
+00:00:47,396 --> 00:00:50,461
+Pick the relevant ones and add your own.
+
+19
+00:00:50,461 --> 00:00:51,917
+Up to ten in total.
+
+20
+00:00:57,126 --> 00:00:59,596
+Each phrase gets a relevance score.
+
+21
+00:00:59,596 --> 00:01:03,759
+We mark the queries we want to track and press Get results.
+
+22
+00:01:08,038 --> 00:01:09,665
+This is the main screen.
+
+23
+00:01:09,665 --> 00:01:12,377
+Every query is sent to a language model,
+
+24
+00:01:12,377 --> 00:01:15,767
+and the service checks whether your site is cited.
+
+25
+00:01:16,476 --> 00:01:20,617
+Visibility is the share of answers where the brand was found.
+
+26
+00:01:20,617 --> 00:01:24,214
+Average position is where it ranks among the sources.
+
+27
+00:01:24,214 --> 00:01:26,658
+The charts build up a daily history.
+
+28
+00:01:27,365 --> 00:01:29,979
+Below you can see the score for each query
+
+29
+00:01:29,979 --> 00:01:32,344
+and the list of sites the AI links to.
+
+30
+00:01:33,059 --> 00:01:36,993
+A report with recommendations can be sent to your email.
+
+31
+00:01:42,187 --> 00:01:43,876
+Want to grow faster?
+
+32
+00:01:43,876 --> 00:01:44,889
+Pick a plan.
+
+33
+00:01:44,889 --> 00:01:48,098
+In this demo the payment is simulated:
+
+34
+00:01:48,098 --> 00:01:50,716
+Stripe is replaced with a stub.
+
+35
+00:01:51,425 --> 00:01:55,304
+The payment went through, and we return to the dashboard.
+
+36
+00:01:55,996 --> 00:01:57,615
+Finally, we log out.
+
+37
+00:01:57,615 --> 00:02:02,069
+The token is removed and the dashboard is locked again.
+
+38
+00:02:02,797 --> 00:02:03,701
+That's it.
+
+39
+00:02:03,701 --> 00:02:07,230
+Diagrams and details are in the README.
+
+40
+00:02:07,230 --> 00:02:09,040
+Thanks for watching!
