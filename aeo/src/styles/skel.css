@@ -1,0 +1,48 @@
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeleton,
+.skeleton-line,
+.skeleton-block {
+    position: relative;
+    overflow: hidden;
+    filter: blur(3px);
+
+}
+
+.skeleton::after,
+.skeleton-line::after,
+.skeleton-block::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+            rgba(200, 200, 200, 0.10) 0%,
+            rgba(200, 200, 200, 0.30) 50%,
+            rgba(200, 200, 200, 0.10) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+}
+
+
+.skeleton-line {
+    display: inline-block;
+ 
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.skeleton-block {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.content.skeleton {
+    background: rgba(255, 255, 255, 0.25);
+}

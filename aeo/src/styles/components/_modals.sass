@@ -1,0 +1,57 @@
+.modal__overlay
+  position: absolute
+  background: url("/images/loginBg.png") center center / cover no-repeat
+  min-height: 100vh
+
+  inset: 0
+  top: 0
+  left: 0
+  backdrop-filter: blur(10px)
+  display: grid
+  place-items: center
+  z-index: 1000
+  h2
+    text-align: center
+    margin-bottom: 1.5rem
+    font-weight: 400
+
+  .login__container
+    display: flex
+    .left
+      padding-right: 2rem
+      border-right: 1px solid var(--main-text-color)
+    .right
+      padding-left: 2rem
+      min-width: 270px
+  .content
+    position: relative
+    .modal__close
+      position: absolute
+      right: 12px
+      top: 8px
+      border: 0
+      background: transparent
+      font-size: 28px
+      line-height: 1
+      cursor: pointer
+
+    .form__error
+      color: #e23
+      margin: 8px 0 0
+      font-size: 0.9rem
+
+.avgpos-chart
+  position: relative
+
+.avgpos-legend
+  position: absolute
+  right: 12px
+  top: 10px
+  background: rgba(255, 255, 255, 0.664)
+  border: 1px solid rgba(0,0,0,.06)
+  border-radius: 10px
+  padding: 8px 10px
+  font-size: 12px
+  color: #333
+  line-height: 1.35
+  box-shadow: 0 6px 18px rgba(0,0,0,.08)

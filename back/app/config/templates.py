@@ -1,34 +1,30 @@
-# templates.py
+from html import escape
 from typing import Tuple
-import os
 
-from dotenv import load_dotenv
-load_dotenv()
+from app.core.config import BRIEF_URL, CABINET_URL, PAY_URL, TELEGRAM_URL
 
-CABINET_URL = os.getenv("CABINET_URL", "https://app.aeoagency.team/login")
-TELEGRAM_URL = os.getenv("TELEGRAM_URL", "https://t.me/aeoagency_support")
-PAY_URL = os.getenv("PAY_URL", "https://app.aeoagency.team/billing")
-BRIEF_URL = os.getenv("BRIEF_URL", "https://app.aeoagency.team/brief-seo")
 
 def tpl_report(email: str, project: str) -> Tuple[str, str]:
     subj = "Ваш отчёт и рекомендации по видимости"
     html = f"""
     <p>Здравствуйте!</p>
-    <p>Мы подготовили отчёт по проекту <b>{project}</b> и рекомендации по росту видимости.</p>
+    <p>Мы подготовили отчёт по проекту <b>{escape(project)}</b> и рекомендации по росту видимости.</p>
     <p><a href="{CABINET_URL}">Перейти в кабинет</a></p>
     <hr>
     <p>Также в кабинете — быстрые кнопки: оплатить продвижение или связаться с AEO Agency.</p>
     """
     return subj, html
 
+
 def tpl_remind_2d(email: str, project: str) -> Tuple[str, str]:
     subj = "Подсказать пакет продвижения?"
     html = f"""
-    <p>Вы ещё не определились с пакетом для <b>{project}</b>.</p>
+    <p>Вы ещё не определились с пакетом для <b>{escape(project)}</b>.</p>
     <p>Напишите нам — подскажем оптимальный вариант под ваши цели.</p>
     <p><a href="{TELEGRAM_URL}">Открыть Telegram</a></p>
     """
     return subj, html
+
 
 def tpl_cases_5d(email: str, project: str) -> Tuple[str, str]:
     subj = "Кейсы по росту видимости + быстрый старт"
@@ -38,6 +34,7 @@ def tpl_cases_5d(email: str, project: str) -> Tuple[str, str]:
     """
     return subj, html
 
+
 def tpl_brief_9d(email: str, project: str) -> Tuple[str, str]:
     subj = "Сделаем базовый SEO-анализ вашего сайта?"
     html = f"""
@@ -46,6 +43,7 @@ def tpl_brief_9d(email: str, project: str) -> Tuple[str, str]:
     """
     return subj, html
 
+
 def tpl_remind_23d(email: str, project: str) -> Tuple[str, str]:
     subj = "Напоминание про сервис AEO"
     html = f"""
@@ -53,3 +51,12 @@ def tpl_remind_23d(email: str, project: str) -> Tuple[str, str]:
     <p><a href="{CABINET_URL}">Перейти в кабинет</a></p>
     """
     return subj, html
+
+
+TEMPLATES = {
+    "REPORT": tpl_report,
+    "REMIND_2D": tpl_remind_2d,
+    "CASES_5D": tpl_cases_5d,
+    "BRIEF_9D": tpl_brief_9d,
+    "REMIND_23D": tpl_remind_23d,
+}

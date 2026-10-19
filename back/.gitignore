@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+app/.env
+app/data/sessions/
+app/data/screenshots/
+app/data/proxies*.txt

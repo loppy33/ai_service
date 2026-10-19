@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, JSON
-from sqlalchemy.orm import relationship
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
+
 from app.core.db import Base
+
 
 class User(Base):
     __tablename__ = "users"
@@ -10,7 +11,5 @@ class User(Base):
     password = Column(String(255), nullable=False)
     project_name = Column(String(255), nullable=False)
     subscribe = Column(Boolean, default=False)
-
-    # поведенческие флаги
     last_seen_at = Column(DateTime(timezone=True), nullable=True)
     paid_at = Column(DateTime(timezone=True), nullable=True)

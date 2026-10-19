@@ -1,229 +1,74 @@
 import asyncio
 import time
+from typing import Dict, List, Optional, Set, Tuple
+
 import httpx
-from typing import Tuple, List, Dict, Optional, Set
-from urllib.parse import urlparse
 
-from app.api.schemas import (
-    BatchQueryRequest,
-    BatchQueryResponse,
-    ItemResult,
-    QueryRequest,
-    QueryResponse,
-    Citation,
-    Render,
-    Target,
-)
-from app.core.position import match_position as core_match_position
+from app.api.schemas import BatchQueryRequest, BatchQueryResponse, Citation, ItemResult, QueryRequest, QueryResponse, Render
+from app.core.position import compute_flags_and_position
 
-SERP_API_URL = "https://serpapi.com/search"  # или другой провайдер
-
-
-# ===================== util: raw_payload =====================
-
-def _prune_serp_data_from_parts(ai_overview: dict, screenshot_url: Optional[str]) -> dict:
-    return {
-        "ai_overview": ai_overview or {},
-        "screenshot_url": screenshot_url,
-    }
+SERP_API_URL = "https://serpapi.com/search"
 
 
 def _is_google_search_url(url: str) -> bool:
     if not isinstance(url, str):
         return False
     u = url.strip().lower()
-    return u.startswith("https://www.google.com/search") or u.startswith("http://www.google.com/search")
+    return u.startswith(("https://www.google.com/search", "http://www.google.com/search"))
 
-
-# ===================== util: AI Overview parsing =====================
 
 def _extract_answer_and_citations(ai_overview: dict) -> Tuple[str, List[Dict[str, str]]]:
-    """
-    Возвращает:
-      - answer: str
-      - citations: [{url, title}] в порядке первого появления
-    Источники ссылок:
-      A) references по reference_indexes
-      B) snippet_links (фильтруем google search)
-      C) ai_overview.citations (fallback)
-    """
     if not isinstance(ai_overview, dict):
         return "", []
 
-    # ---------- ANSWER ----------
+    text_blocks = [b for b in (ai_overview.get("text_blocks") or []) if isinstance(b, dict)]
+
     answer = ai_overview.get("answer") or ""
     if not answer:
-        tblocks = ai_overview.get("text_blocks") or []
-        parts: List[str] = []
-        for b in tblocks:
-            if not isinstance(b, dict):
-                continue
-            txt = b.get("snippet") or b.get("text") or b.get("content") or ""
-            if txt:
-                parts.append(str(txt).strip())
-        if parts:
-            answer = "\n\n".join(parts).strip()
+        parts = [str(b.get("snippet") or b.get("text") or b.get("content") or "").strip() for b in text_blocks]
+        answer = "\n\n".join(p for p in parts if p)
 
-    # ---------- CITATIONS ----------
     citations: List[Dict[str, str]] = []
     seen: Set[str] = set()
 
-    # A) references
-    refs = ai_overview.get("references") or []
+    def _add(url: object, title: str = "") -> None:
+        if isinstance(url, str) and url and url not in seen:
+            seen.add(url)
+            citations.append({"url": url, "title": title})
+
     ref_by_index: Dict[int, Dict[str, str]] = {}
-    if isinstance(refs, list):
-        for ref in refs:
-            if not isinstance(ref, dict):
-                continue
-            idx = ref.get("index")
-            link = ref.get("link")
-            title = ref.get("title", "") or ""
-            if isinstance(idx, int) and isinstance(link, str) and link:
-                ref_by_index[idx] = {"url": link, "title": title}
+    for ref in ai_overview.get("references") or []:
+        if isinstance(ref, dict) and isinstance(ref.get("index"), int) and isinstance(ref.get("link"), str) and ref["link"]:
+            ref_by_index[ref["index"]] = {"url": ref["link"], "title": ref.get("title") or ""}
 
-        for b in ai_overview.get("text_blocks") or []:
-            if not isinstance(b, dict):
-                continue
-            for idx in (b.get("reference_indexes") or []):
-                if not isinstance(idx, int):
-                    continue
-                ref = ref_by_index.get(idx)
-                if ref:
-                    url = ref["url"]
-                    if url not in seen:
-                        seen.add(url)
-                        citations.append({"url": url, "title": ref.get("title", "")})
+    for b in text_blocks:
+        for idx in b.get("reference_indexes") or []:
+            ref = ref_by_index.get(idx) if isinstance(idx, int) else None
+            if ref:
+                _add(ref["url"], ref["title"])
 
-    # B) snippet_links
-    for b in ai_overview.get("text_blocks") or []:
-        if not isinstance(b, dict):
-            continue
-        for sl in (b.get("snippet_links") or []):
-            if isinstance(sl, dict):
-                url = sl.get("link")
-                if isinstance(url, str) and url and not _is_google_search_url(url):
-                    if url not in seen:
-                        seen.add(url)
-                        citations.append({"url": url, "title": ""})
-            elif isinstance(sl, str) and sl and not _is_google_search_url(sl):
-                if sl not in seen:
-                    seen.add(sl)
-                    citations.append({"url": sl, "title": ""})
+    for b in text_blocks:
+        for sl in b.get("snippet_links") or []:
+            link = sl.get("link") if isinstance(sl, dict) else sl
+            if isinstance(link, str) and not _is_google_search_url(link):
+                _add(link)
 
-    # C) fallback
     if not citations:
         for c in ai_overview.get("citations") or []:
-            if isinstance(c, dict) and isinstance(c.get("link"), str) and c["link"]:
-                url = c["link"]
-                if url not in seen:
-                    seen.add(url)
-                    citations.append({"url": url, "title": c.get("title", "") or ""})
+            if isinstance(c, dict):
+                _add(c.get("link"), c.get("title") or "")
 
     return answer or "", citations
 
 
-# ===================== util: POSITION =====================
-
-
-def _registrable_domain(url_or_domain: str) -> Optional[str]:
-    """
-    Очень простой экстрактор домена (без public suffix list).
-    Предполагаем, что ядро уже у тебя есть в core.position; это fallback.
-    """
-    if not url_or_domain:
-        return None
-    s = str(url_or_domain).strip()
-    host = s
-    if "://" in s:
-        try:
-            host = urlparse(s).netloc
-        except Exception:
-            host = s
-    host = host.split("@")[-1]  # выкинуть user@
-    host = host.split(":")[0]   # выкинуть порт
-    host = host.strip().lower()
-    # грубо: берём два последних лейбла (example.com), если их >=2
-    parts = [p for p in host.split(".") if p]
-    if len(parts) >= 2:
-        return ".".join(parts[-2:])
-    return host or None
-
-
-def _normalize_url_simple(url: str) -> str:
-    u = (url or "").strip().lower()
-    # убираем фрагмент/якорь
-    if "#" in u:
-        u = u.split("#", 1)[0]
-    # убираем trailing slashы
-    while u.endswith("/") and len(u) > 1:
-        u = u[:-1]
-    return u
-
-def _compute_flags_and_position(citations_list, target):
-    """
-    Возвращает (position:int|None, flags:dict), где flags:
-    - matched_exact_url
-    - matched_url_prefix
-    - matched_registrable_domain
-    - matched_brand
-    Совпадает по приоритету с _local_position.
-    """
-    flags = {
-        "matched_exact_url": False,
-        "matched_url_prefix": False,
-        "matched_registrable_domain": False,
-        "matched_brand": False,
-    }
-    if not citations_list:
-        return None, flags
-
-    target_url = str(getattr(target, "url", "") or "").strip()
-    target_dom = str(getattr(target, "domain", "") or "").strip()
-    brand = (str(getattr(target, "brand", "") or "").strip().lower()) or None
-
-    target_url_norm = _normalize_url_simple(target_url) if target_url else None
-    target_reg_dom = _registrable_domain(target_dom) if target_dom else None
-
-    for idx, c in enumerate(citations_list, start=1):
-        url = str(c.get("url", "") or "")
-        title = str(c.get("title", "") or "")
-        url_norm = _normalize_url_simple(url)
-        dom = _registrable_domain(url)
-
-        if target_url_norm and url_norm == target_url_norm:
-            flags["matched_exact_url"] = True
-            return idx, flags
-        if target_url_norm and url_norm.startswith(target_url_norm.rstrip("/")):
-            flags["matched_url_prefix"] = True
-            return idx, flags
-        if target_reg_dom and dom == target_reg_dom:
-            flags["matched_registrable_domain"] = True
-            return idx, flags
-        if brand and (brand in url_norm or brand in title.lower()):
-            flags["matched_brand"] = True
-            return idx, flags
-
-    return None, flags
-
-
-# ===================== network helpers =====================
-
-async def _fetch_google_ai_overview_content(
-    client: httpx.AsyncClient,
-    api_key: str,
-    page_token: str,
-) -> dict:
-    params = {
-        "engine": "google_ai_overview",
-        "page_token": page_token,
-        "api_key": api_key,
-    }
-    resp = await client.get(SERP_API_URL, params=params)
+async def _fetch_serpapi(client: httpx.AsyncClient, params: Dict[str, Optional[str]]) -> dict:
+    resp = await client.get(SERP_API_URL, params={k: v for k, v in params.items() if v is not None})
     resp.raise_for_status()
-    return resp.json() or {}
+    data = resp.json() or {}
+    if isinstance(data, dict) and data.get("error") and not data.get("ai_overview"):
+        raise RuntimeError(f"SerpAPI error: {data['error']}")
+    return data
 
-
-# ===================== main handlers =====================
 
 async def handle_google_ai(req: QueryRequest) -> QueryResponse:
     if not req.options or not req.options.api_key:
@@ -231,67 +76,50 @@ async def handle_google_ai(req: QueryRequest) -> QueryResponse:
 
     start = time.time()
     timeout_sec = (req.options.timeout_ms or 8000) / 1000
-
-    geo = getattr(req, "geo", None) or None
-    params = {
-        "engine": "google",
-        "q": req.query,
-        "hl": (getattr(geo, "language", None) or "en"),
-        "gl": (getattr(geo, "country",  None) or "us"),
-        "location": getattr(geo, "location", None),
-        "api_key": req.options.api_key,
-    }
+    geo = req.geo
+    api_key = req.options.api_key
 
     async with httpx.AsyncClient(timeout=timeout_sec) as client:
-        # 1) обычный SERP
-        resp = await client.get(SERP_API_URL, params=params)
-        resp.raise_for_status()
-        data = resp.json() or {}
+        data = await _fetch_serpapi(
+            client,
+            {
+                "engine": "google",
+                "q": req.query,
+                "hl": (geo.language if geo else None) or "en",
+                "gl": (geo.country if geo else None) or "us",
+                "location": geo.location if geo else None,
+                "api_key": api_key,
+            },
+        )
 
-        ai_overview = (data.get("ai_overview") or {}) if isinstance(data, dict) else {}
+        ai_overview = data.get("ai_overview") or {}
         screenshot_url = data.get("screenshot_url")
-
-        # контент
         answer, citations_list = _extract_answer_and_citations(ai_overview)
 
-        # догрузка по page_token (если нужно)
         page_token = ai_overview.get("page_token")
         if page_token and (not answer or not citations_list):
             try:
-                page_payload = await _fetch_google_ai_overview_content(
-                    client=client,
-                    api_key=req.options.api_key,
-                    page_token=page_token,
+                page_payload = await _fetch_serpapi(
+                    client, {"engine": "google_ai_overview", "page_token": page_token, "api_key": api_key}
                 )
-                loaded_ai = (page_payload.get("ai_overview") or {}) if isinstance(page_payload, dict) else {}
-                if loaded_ai:
-                    ai_overview = loaded_ai
-                    answer, citations_list = _extract_answer_and_citations(ai_overview)
+                loaded = page_payload.get("ai_overview") or {}
+                if loaded:
+                    ai_overview = loaded
+                    answer, citations_list = _extract_answer_and_citations(loaded)
                     screenshot_url = screenshot_url or page_payload.get("screenshot_url")
-            except Exception:
+            except (httpx.HTTPError, RuntimeError):
                 pass
 
-    # ===== POSITION: строго по правилам и по порядку показов =====
-    position_num, flags = _compute_flags_and_position(citations_list, req.target)
-    # Pydantic Citation для ответа
-    citations_model = [
-        Citation(url=c["url"], title=c.get("title", ""))
-        for c in citations_list
-        if isinstance(c, dict) and isinstance(c.get("url"), str) and c["url"]
-    ]
-
-    duration = int((time.time() - start) * 1000)
-    cleaned = _prune_serp_data_from_parts(ai_overview=ai_overview, screenshot_url=screenshot_url)
-    cleaned["flags"] = flags
+    position, flags = compute_flags_and_position(citations_list, req.target)
     return QueryResponse(
-        position=position_num,
-        answer=answer or "",
-        citations=citations_model,
+        position=position,
+        answer=answer,
+        citations=[Citation(url=c["url"], title=c.get("title", "")) for c in citations_list],
         render=Render(
-            screenshot_url=cleaned.get("screenshot_url"),
-            raw_payload=cleaned,
+            screenshot_url=screenshot_url,
+            raw_payload={"ai_overview": ai_overview, "screenshot_url": screenshot_url, "flags": flags},
         ),
-        timings_ms={"total": duration},
+        timings_ms={"total": int((time.time() - start) * 1000)},
     )
 
 
@@ -300,25 +128,15 @@ async def handle_google_ai_batch(req: BatchQueryRequest) -> BatchQueryResponse:
         raise ValueError("api_key is required for google_ai")
 
     start = time.time()
-    sem = asyncio.Semaphore(max(1, req.concurrency or 5))
+    sem = asyncio.Semaphore(req.concurrency)
 
     async def _one(q: str) -> ItemResult:
         async with sem:
             try:
-                single = QueryRequest(
-                    query=q,
-                    geo=req.geo,
-                    target=req.target,
-                    source=req.source,
-                    options=req.options,
-                )
-                r: QueryResponse = await handle_google_ai(single)
-                return ItemResult(query=q, response=r)
+                single = QueryRequest(query=q, geo=req.geo, target=req.target, source=req.source, options=req.options)
+                return ItemResult(query=q, response=await handle_google_ai(single))
             except Exception as e:
-                return ItemResult(query=q, error=str(e))
+                return ItemResult(query=q, error=str(e) or e.__class__.__name__)
 
-    tasks = [asyncio.create_task(_one(q)) for q in req.queries]
-    results = await asyncio.gather(*tasks)
-
-    total = int((time.time() - start) * 1000)
-    return BatchQueryResponse(results=results, timings_ms={"total": total})
+    results = await asyncio.gather(*(_one(q) for q in req.queries))
+    return BatchQueryResponse(results=list(results), timings_ms={"total": int((time.time() - start) * 1000)})

@@ -1,0 +1,94 @@
+
+.dash
+    display: grid
+    grid-template-columns: 260px 1fr
+    min-height: 100vh
+    background: url("/images/loginBg.png") center center / cover no-repeat
+
+    .sidebar
+        position: sticky
+        top: 0
+        height: 100vh
+        padding: 16px
+        background: var(--sb-bg)
+        backdrop-filter: blur(8px)
+        border-right: 1px solid var(--sb-border)
+        color: var(--sb-text)
+        display: flex
+        flex-direction: column
+        gap: 16px
+
+        .new-project
+            background: var(--accent)
+            color: #fff
+            border: 0
+            border-radius: 10px
+            padding: 12px 24px
+            font-weight: 400
+            cursor: pointer
+            font-size: 18px
+
+        .section-title
+            margin-top: 4px
+            font-weight: 600
+            color: var(--sb-text)
+            opacity: .9
+
+        .logout
+            background: transparent
+            color: var(--sb-text)
+            border: 1px solid var(--sb-border)
+            border-radius: 10px
+            padding: 8px 12px
+            cursor: pointer
+            font-size: 14px
+
+            &:hover
+                background: var(--link-bg)
+
+        .nav
+            display: flex
+            flex-direction: column
+            gap: 6px
+
+            .nav-link
+                display: flex
+                align-items: center
+                gap: 10px
+                padding: 10px 12px
+                border-radius: 10px
+                color: var(--sb-text)
+                text-decoration: none
+                background: transparent
+                transition: .2s ease
+
+                &:hover
+                    background: var(--link-bg)
+                &:active,
+                &.active
+                    background: var(--link-active)
+
+        .icon
+            width: 18px
+            text-align: center
+            opacity: .9
+
+        .label
+            font-size: 14px
+
+        .brand
+            margin-top: auto
+            font-size: 12px
+            color: var(--sb-muted)
+
+            & .logo
+                font-size: 14px
+                margin-bottom: 8px
+                opacity: .9
+
+            & .links a
+                color: var(--sb-muted)
+                text-decoration: none
+            & .links
+                a:hover
+                    text-decoration: underline

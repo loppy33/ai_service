@@ -6,12 +6,13 @@ from typing import Optional
 
 from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
 
-TARGET_URL = "https://chat.openai.com/"
-DATA_DIR = Path("app/data/sessions")
+from app.core.config import SESSIONS_DIR
+
+TARGET_URL = "https://chatgpt.com/"
+DATA_DIR = SESSIONS_DIR
 
 
 def sanitize_name(name: str) -> str:
-    """Оставляем только латиницу, цифры, дефис и нижнее подчёркивание."""
     name = name.strip()
     name = re.sub(r"\s+", "_", name)
     name = re.sub(r"[^A-Za-z0-9_\-]", "", name)
@@ -33,7 +34,6 @@ async def capture_session(
     timeout_ms: int = 120_000,
     user_agent: Optional[str] = None,
 ) -> Path:
-    """Открывает страницу, даёт вам войти, по Enter сохраняет storage state в app/data/<name>.json."""
     async with async_playwright() as p:
         print(f"\n🚀 Старт захвата сессии: {name}")
         browser = await p.chromium.launch(

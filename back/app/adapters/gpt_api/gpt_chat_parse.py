@@ -1,25 +1,22 @@
-# Патч для gpt_chat_parse.py — дружелюбные сообщения про прокси/туннель
-# Вставь изменения ниже в свой файл gpt_chat_parse.py
-
+import asyncio
 import random
 import time
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
+from uuid import uuid4
 
-from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError, Error as PlaywrightError
+from playwright.async_api import Error as PlaywrightError
+from playwright.async_api import TimeoutError as PlaywrightTimeoutError
+from playwright.async_api import async_playwright
+
 from app.api.schemas import BatchQueryRequest, BatchQueryResponse, ItemResult, QueryRequest, QueryResponse
+from app.core.config import CHATGPT_HEADLESS, SCREENSHOTS_DIR, SESSIONS_DIR
+from app.core.utiles import build_prompt, choose_proxy, find_editor, handle_after_enter, to_query_response
 
-from app.core.position import match_position
-from app.core.utiles import *
-from app.core.utiles import _compute_flags_and_position
+TARGET_URL = "https://chatgpt.com/"
+AUTH_MODAL_SEL = "[data-testid='modal-no-auth-welcome-back']"
 
-# === Константы ===
-TARGET_URL = "https://chat.openai.com/"
-STATIC_ROOT = Path("app/data")
-SESSIONS_DIR = Path("app/data/sessions")
-ASSISTANT_SEL = "div[data-message-author-role='assistant']"
 
-# --- НОВОЕ: аккуратная нормализация сетевых ошибок ---
 def _nice_net_error(err: Exception) -> RuntimeError:
     s = str(err)
     if "Browser needs to be launched with the global proxy" in s:
@@ -29,142 +26,85 @@ def _nice_net_error(err: Exception) -> RuntimeError:
     if "ERR_PROXY_CONNECTION_FAILED" in s or "ECONNRESET" in s or "ECONNREFUSED" in s:
         return RuntimeError("Ошибка сети/прокси при открытии ChatGPT. Проверьте настройки прокси или доступ в сеть.")
     if "ERR_NAME_NOT_RESOLVED" in s:
-        return RuntimeError("DNS не разрешил хост chat.openai.com — проверьте резолвер.")
+        return RuntimeError("DNS не разрешил хост chatgpt.com — проверьте резолвер.")
     return RuntimeError(f"Сетевая ошибка: {s}")
 
 
-def _pick_random_session() -> Path | None:
-    try:
-        files = [p for p in SESSIONS_DIR.glob("*.json") if p.is_file()]
-        return random.choice(files) if files else None
-    except Exception:
-        return None
+def _pick_random_session() -> Optional[Path]:
+    files = [p for p in SESSIONS_DIR.glob("*.json") if p.is_file()]
+    return random.choice(files) if files else None
 
 
-def _invalidate_session(session_path: Path | None):
-    if not session_path:
-        return
-    try:
+def _invalidate_session(session_path: Optional[Path]) -> None:
+    if session_path:
         session_path.unlink(missing_ok=True)
-    except Exception:
-        pass
 
 
-async def _ensure_no_auth_modal_or_raise(page, session_path: Path | None):
-    modal = page.locator("[data-testid='modal-no-auth-welcome-back']").first
+async def _ensure_no_auth_modal_or_raise(page, session_path: Optional[Path]) -> None:
+    modal = page.locator(AUTH_MODAL_SEL).first
     try:
-        if await modal.count() > 0 and await modal.is_visible():
-            _invalidate_session(session_path)
-            raise RuntimeError(f"Ошибка сессии: {session_path.name if session_path else 'unknown'}. Попробуйте ещё раз.")
-    except Exception:
-        pass
+        visible = await modal.count() > 0 and await modal.is_visible()
+    except PlaywrightError:
+        return
+    if visible:
+        _invalidate_session(session_path)
+        raise RuntimeError(f"Ошибка сессии: {session_path.name if session_path else 'unknown'}. Попробуйте ещё раз.")
 
 
-# === Основная логика ===
 async def handle_gpt_chat_parse(req: QueryRequest) -> QueryResponse:
     start = time.time()
-
     session_path = _pick_random_session()
+    screen_path = SCREENSHOTS_DIR / f"chatgpt_answer_{int(time.time() * 1000)}_{uuid4().hex[:6]}.png"
 
-    from uuid import uuid4
-    screen_path = STATIC_ROOT / f"chatgpt_answer_{int(time.time()*1000)}_{uuid4().hex[:6]}.png"
-
-    if isinstance(req, dict):
-        req_dict = req
-    elif hasattr(req, "model_dump"):
-        req_dict = req.model_dump(mode="json")
-    elif hasattr(req, "dict"):
-        req_dict = req.dict()
-    else:
-        req_dict = {}
-
-    proxy_list = None
-    if hasattr(req, "options") and getattr(req.options, "proxy_list", None):
-        proxy_list = req.options.proxy_list
-    else:
-        proxy_list = (req_dict.get("options", {}) or {}).get("proxy_list")
-
+    req_dict = req.model_dump(mode="json")
+    proxy_list = req.options.proxy_list if req.options else None
     proxy = choose_proxy(proxy_list) if proxy_list else None
 
     async with async_playwright() as p:
-        # ВАЖНО: убрали proxy из launch ("per-context" ломал соединение)
         try:
             browser = await p.chromium.launch(
-                headless=False,
+                headless=CHATGPT_HEADLESS,
                 args=[
                     "--disable-blink-features=AutomationControlled",
                     "--disable-features=IsolateOrigins,site-per-process",
                 ],
-                proxy={"server": "http://per-context"},  # требование Playwright для per-context proxy
+                proxy={"server": "http://per-context"},
                 slow_mo=50,
             )
         except PlaywrightError as e:
             raise _nice_net_error(e)
 
-        context_kwargs: Dict[str, Any] = {}
-        if session_path:
-            context_kwargs["storage_state"] = str(session_path)
-
-        # Прокси теперь только на уровне контекста
-        if proxy:
-            context_kwargs["proxy"] = proxy
-        else:
-            context_kwargs["proxy"] = {"server": "direct"}
-
         try:
-            context = await browser.new_context(**context_kwargs)
-        except PlaywrightError as e:
-            await browser.close()
-            raise _nice_net_error(e)
+            context_kwargs: Dict[str, Any] = {"proxy": proxy or {"server": "direct"}}
+            if session_path:
+                context_kwargs["storage_state"] = str(session_path)
 
-        page = await context.new_page()
+            try:
+                context = await browser.new_context(**context_kwargs)
+                page = await context.new_page()
+                await page.goto(TARGET_URL)
+                await page.wait_for_load_state("domcontentloaded")
+            except PlaywrightError as e:
+                raise _nice_net_error(e)
 
-        try:
-            await page.goto(TARGET_URL)
-            await page.wait_for_load_state("domcontentloaded")
-        except PlaywrightError as e:
-            await browser.close()
-            raise _nice_net_error(e)
-        except PlaywrightError as e:
-            await browser.close()
-            raise _nice_net_error(e)
-
-        # Проверка на модал "welcome back"
-        await _ensure_no_auth_modal_or_raise(page, session_path)
-        editor = await find_editor(page)
-
-        try:
-            await editor.scroll_into_view_if_needed()
-            await editor.click(timeout=10_000)
-        except PlaywrightTimeoutError:
             await _ensure_no_auth_modal_or_raise(page, session_path)
-            raise
+            editor = await find_editor(page)
 
-        prompt = build_prompt(req_dict)
-        await page.keyboard.insert_text(prompt)
-        await page.keyboard.press("Enter")
-
-        try:
-            result: Dict[str, Any] = await handle_after_enter(page, req_dict, screen_path)
-            citations_list = result.get("citations") or []
-            pos, flags = _compute_flags_and_position(citations_list, req.target)
-            if pos is not None:
-                result["position"] = pos
-            render = result.get("render") or {}
-            raw_payload = (render.get("raw_payload") or {})
-            raw_payload["flags"] = flags
-            render["raw_payload"] = raw_payload
-            result["render"] = render
-        except PlaywrightTimeoutError:
-            await _ensure_no_auth_modal_or_raise(page, session_path)
-            raise
-        except PlaywrightError as e:
-            raise _nice_net_error(e)
+            try:
+                await editor.scroll_into_view_if_needed()
+                await editor.click(timeout=10_000)
+                await page.keyboard.insert_text(build_prompt(req_dict))
+                await page.keyboard.press("Enter")
+                result = await handle_after_enter(page, req_dict, screen_path)
+            except PlaywrightTimeoutError:
+                await _ensure_no_auth_modal_or_raise(page, session_path)
+                raise
+            except PlaywrightError as e:
+                raise _nice_net_error(e)
         finally:
             await browser.close()
 
-    duration_ms = int((time.time() - start) * 1000)
-    return to_query_response(result, duration_ms)
+    return to_query_response(result, int((time.time() - start) * 1000))
 
 
 async def handle_gpt_chat_parse_batch(req: BatchQueryRequest) -> BatchQueryResponse:
@@ -172,32 +112,15 @@ async def handle_gpt_chat_parse_batch(req: BatchQueryRequest) -> BatchQueryRespo
         raise ValueError("handle_gpt_chat_parse_batch ожидает source='gpt_chat_parse'")
 
     start = time.time()
-    sem = asyncio.Semaphore(max(1, req.concurrency or 5))
-    results: List[ItemResult] = []
+    sem = asyncio.Semaphore(req.concurrency)
 
     async def _one(q: str) -> ItemResult:
         async with sem:
             try:
-                single = QueryRequest(
-                    query=q,
-                    geo=req.geo,
-                    target=req.target,
-                    source=req.source,
-                    options=req.options,
-                )
-                r: QueryResponse = await handle_gpt_chat_parse(single)
-                if r.position is None:
-                    try:
-                        r.position = match_position(r.citations, req.target)
-                    except Exception:
-                        pass
-                return ItemResult(query=q, response=r)
+                single = QueryRequest(query=q, geo=req.geo, target=req.target, source=req.source, options=req.options)
+                return ItemResult(query=q, response=await handle_gpt_chat_parse(single))
             except Exception as e:
-                # Здесь теперь прилетят наши дружелюбные RuntimeError с коротким текстом
-                return ItemResult(query=q, error=str(e))
+                return ItemResult(query=q, error=str(e) or e.__class__.__name__)
 
-    tasks = [asyncio.create_task(_one(q)) for q in req.queries]
-    results = await asyncio.gather(*tasks)
-
-    total = int((time.time() - start) * 1000)
-    return BatchQueryResponse(results=results, timings_ms={"total": total})
+    results = await asyncio.gather(*(_one(q) for q in req.queries))
+    return BatchQueryResponse(results=list(results), timings_ms={"total": int((time.time() - start) * 1000)})

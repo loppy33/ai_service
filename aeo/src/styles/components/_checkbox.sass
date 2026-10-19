@@ -1,0 +1,39 @@
+$checkbox-bg: #4b4b4b
+$checkbox-check: #fff
+$checkbox-size: 20px
+$checkbox-radius: 4px
+
+.checkbox
+    position: relative
+    display: inline-flex
+    align-items: center
+    gap: 8px
+    cursor: pointer
+    font-size: 14px
+    color: #1a1a1a
+    user-select: none
+
+    input[type='checkbox']
+        appearance: none
+        width: $checkbox-size
+        height: $checkbox-size
+        border-radius: $checkbox-radius
+        background-color: rgba(0, 0, 0, 0.1)
+        border: none
+        cursor: pointer
+        display: grid
+        place-items: center
+
+        &:checked
+            background-color: $checkbox-bg
+
+            &::after
+                position: absolute
+                top: 35%
+                content: ''
+                width: 6px
+                height: 10px
+                border-right: 3px solid $checkbox-check
+                border-bottom: 3px solid $checkbox-check
+                transform: rotate(45deg)
+

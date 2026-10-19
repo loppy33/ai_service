@@ -1,0 +1,31 @@
+input
+    border: none
+    text-decoration: none
+    background: transparent
+    outline: none
+    color: #1a1a1a
+    &::placeholder
+        color: rgba(0, 0, 0, 0.4)
+
+.input
+    width: 100%
+    max-width: 241px
+    height: 37px
+    padding: 0 10px
+    border: 1px solid rgba(59, 59, 59, 0.2)
+    border-radius: 8px
+    background: rgba(255, 255, 255, 0.44)
+    color: #1a1a1a
+    font-size: 14px
+    transition: border-color 0.2s ease, box-shadow 0.2s ease
+    &.border
+        border: 1px solid #E65400
+    &::placeholder
+        color: rgba(0, 0, 0, 0.4)
+
+    &:focus
+        border-color: #5a8cff
+        box-shadow: 0 0 0 3px rgba(90, 140, 255, 0.25)
+        background: #fff
+
+

@@ -1,0 +1,104 @@
+.Overview
+    position: relative
+    .info__container
+        text-align: center
+        margin: 2rem 0
+        .date
+            font-size: 14px
+        h3
+            font-weight: 500
+            font-size: 24px
+            margin-bottom: 1rem
+
+        .other
+            display: flex
+            gap: 1rem
+            border: 1px solid var(--border-color)
+            width: fit-content
+            margin: auto
+            padding: 2px 12px
+            border-radius: 40px
+
+            strong
+                font-weight: 500
+    .mainInfo__container
+        display: grid
+        gap: 1rem
+        grid-template-columns: repeat(auto-fit, minmax(calc( 50% - 1rem ), 1fr))
+
+        .content
+            position: relative
+            height: 250px
+            overflow-x: scroll
+            overflow-x: hidden
+            padding: 1rem
+            .desc
+                font-size: 12px
+                font-weight: 400
+                color: var(--desc-color)
+                padding-bottom: 10px
+                border-bottom: 1px solid rgba(0, 0, 0, .05)
+
+
+        .stats.big .kpi
+            display: flex
+            justify-content: space-between
+            align-items: center
+            font-size: 16px
+            font-weight: 400
+            padding: 10px 0
+            border-bottom: 1px solid rgba(0, 0, 0, .05)
+
+        .pos
+            color: #008F0A99
+
+        .neg
+            color: #E9060699
+
+        .vis
+            font-size: 12px
+
+        .sparklines
+            display: flex
+            align-items: flex-end
+            gap: 3px
+            height: 125px
+            margin-top: 8px
+            & div
+                width: 8px
+                background: rgba(0, 0, 0, .15)
+                border-radius: 3px
+
+            &.bluish
+                div
+                    background: rgba(0, 64, 255, .25)
+
+        .stats.list .row,
+        .linkrow
+            display: flex
+            align-items: center
+            justify-content: space-between
+            padding: 10px 0
+            border-bottom: 1px solid rgba(0, 0, 0, .05)
+            text-decoration: none
+            color: inherit
+
+            span
+                display: flex
+                align-items: center
+                gap: .5rem
+
+            .score
+                font-size: 14px
+
+    .linkbtn
+        margin-top: 1rem
+    .footerActions
+        .cta
+            display: flex
+            justify-content: center
+            align-items: center
+            gap: 1rem
+
+            a
+                width: fit-content
